@@ -32,7 +32,7 @@ export class UserController extends BaseController {
   }
 
   @Post('new')
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   createUser(@Body() userDto: CreateUserDto) {
     if (!userDto || Object.keys(userDto).length === 0) {
       throw new BadRequestException();
