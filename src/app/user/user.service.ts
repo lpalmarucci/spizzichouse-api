@@ -18,13 +18,11 @@ export class UserService {
     private configService: ConfigService,
   ) {}
 
-  findAll(): Promise<Omit<User, 'password'>[]> {
-    return this.userRepository.find({
-      select: ['userId', 'firstname', 'lastname', 'username', 'created_at'],
-    });
+  findAll(): Promise<User[]> {
+    return this.userRepository.find();
   }
 
-  async findById(userId: string): Promise<Omit<User, 'password'>> {
+  async findById(userId: string): Promise<User> {
     const user: User = await this.userRepository.findOne({
       where: {
         userId,
@@ -44,7 +42,7 @@ export class UserService {
     });
   }
 
-  async createUser(userDto: CreateUserDto): Promise<CreateUserDto> {
+  async createUser(userDto: CreateUserDto): Promise<User> {
     const saltOrRounds: number = +this.configService.get('SALT_OR_ROUNDS');
     const password: string = await bcrypt.hash(userDto.password, saltOrRounds);
 
