@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { User } from '../user/User.entity';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
@@ -26,6 +26,7 @@ export class AuthenticationService {
 
   async validateUser(username: string, password: string): Promise<User> {
     const user = await this.userService.findByUsername(username);
+    if (!user) throw new HttpException('User not found', HttpStatus.FORBIDDEN);
     const isSamePassword = await bcrypt.compare(password, user.password);
     if (user && isSamePassword) {
       return user;
