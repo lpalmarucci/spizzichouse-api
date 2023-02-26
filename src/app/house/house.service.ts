@@ -3,8 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateHouseDto } from './dto/create-house.dto';
-import { UpdateHouseDto } from './dto/update-house.dto';
+import { CreateHouseDto } from './dto/CreateHouse.dto';
+import { UpdateHouseDto } from './dto/UpdateHouse.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { House } from './entities/house.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -34,7 +34,7 @@ export class HouseService {
     const house: House = await this.houseRepository.findOneBy({
       houseId: id,
     });
-    if (!house) throw new NotFoundException('House not found');
+    if (!house) throw new NotFoundException(`HouseId:${id}  not found`);
     return house;
   }
 
