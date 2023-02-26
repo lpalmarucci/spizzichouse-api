@@ -6,11 +6,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from 'src/app/user/User.entity';
+import { Match } from 'src/app/match/entities/match.entity';
 
-@Entity()
-export class House {
+@Entity({ name: 'locations' })
+export class Location {
   @PrimaryGeneratedColumn('uuid')
-  houseId: string;
+  locationId: string;
 
   @Column({ type: 'varchar', unique: true })
   name: string;
@@ -18,6 +19,9 @@ export class House {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => User, (photo) => photo.house)
+  @OneToMany(() => User, (photo) => photo.location)
   players: User[];
+
+  @OneToMany(() => Match, (play) => play.location)
+  matches: Match[];
 }

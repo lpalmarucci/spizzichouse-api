@@ -3,10 +3,10 @@ import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { User } from './User.entity';
-import { HouseModule } from '../location/location.module';
+import { LocationModule } from '../location/location.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), HouseModule],
+  imports: [TypeOrmModule.forFeature([User]), LocationModule],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],

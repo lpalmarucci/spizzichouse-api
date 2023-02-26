@@ -3,14 +3,22 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { House } from '../location/entities/location.entity';
+import { Location } from '../location/entities/location.entity';
+import { Match } from '../match/entities/match.entity';
+import { Round } from '../round/entities/round.entity';
 
 @Entity({ name: 'users' })
 export class User {
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
+
   @PrimaryGeneratedColumn('uuid')
   userId: string;
 
@@ -24,7 +32,7 @@ export class User {
   username: string;
 
   @Column()
-  @Exclude()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   @CreateDateColumn()
@@ -34,11 +42,17 @@ export class User {
   @Exclude()
   token: string;
 
-  @ManyToOne(() => House, (house) => house.players, {
+  @ManyToOne(() => Location, (house) => house.players, {
     cascade: true,
     eager: true,
     onDelete: 'SET NULL',
   })
-  @JoinColumn({ name: 'houseId' })
-  house: House;
+  @JoinColumn({ name: 'locationId' })
+  location: Location;
+
+  @ManyToMany(() => Match, (play) => play.location)
+  plays: Match[];
+
+  @OneToMany(() => Round, (round) => round.user)
+  rounds: Round[];
 }

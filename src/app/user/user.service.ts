@@ -1,5 +1,5 @@
-import { HouseService } from '../location/location.service';
-import { House } from '../location/entities/location.entity';
+import { LocationService } from '../location/location.service';
+import { Location } from '../location/entities/location.entity';
 import {
   BadRequestException,
   Injectable,
@@ -18,7 +18,7 @@ export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private configService: ConfigService,
-    private houseService: HouseService,
+    private houseService: LocationService,
   ) {}
 
   findAll(): Promise<User[]> {
@@ -49,9 +49,11 @@ export class UserService {
     let newUserDto: DeepPartial<User> = {
       ...userDto,
     };
-    if (userDto.houseId) {
-      const house: House = await this.houseService.findOne(userDto.houseId);
-      newUserDto.house = house;
+    if (userDto.locationId) {
+      const house: Location = await this.houseService.findOne(
+        userDto.locationId,
+      );
+      newUserDto.location = house;
     }
     const saltOrRounds: number = +this.configService.get('SALT_OR_ROUNDS');
     const password: string = await bcrypt.hash(userDto.password, saltOrRounds);
@@ -68,11 +70,12 @@ export class UserService {
   }
 
   async updateUser(userId: string, userDto: UpdateUserDto): Promise<User> {
-    const { houseId, ...updatedUser } = userDto;
-    const house = await this.houseService.findOne(houseId);
+    const { locationId, ...updatedUser } = userDto;
+    const house = await this.houseService.findOne(locationId);
     const user = await this.findById(userId);
-    user.house = house;
-    return await this.userRepository.save({ ...user, ...updatedUser });
+    user.location = house;
+    const result = await this.userRepository.save({ ...user, ...updatedUser });
+    return new User(result);
   }
 
   async deleteUser(userId: string): Promise<Omit<DeleteResult, 'raw'>> {
