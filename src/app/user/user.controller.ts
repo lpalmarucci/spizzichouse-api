@@ -13,7 +13,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UpdateUserDto } from './dto/UpdateUser.dto';
-import { BaseController } from '../shared/BaseController';
+import { BaseController } from '../shared/controller/BaseController';
 
 @Controller('users')
 export class UserController extends BaseController {

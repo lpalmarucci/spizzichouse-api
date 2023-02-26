@@ -8,7 +8,7 @@ import { randomUUID } from 'crypto';
 
 @Entity()
 export class House {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   houseId: string;
 
   @Column({ type: 'varchar', unique: true })
