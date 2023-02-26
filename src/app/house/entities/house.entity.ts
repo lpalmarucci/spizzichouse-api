@@ -2,9 +2,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { randomUUID } from 'crypto';
+import { User } from 'src/app/user/User.entity';
 
 @Entity()
 export class House {
@@ -16,4 +17,7 @@ export class House {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @OneToMany(() => User, (photo) => photo.house)
+  players: User[];
 }

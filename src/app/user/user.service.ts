@@ -1,3 +1,5 @@
+import { HouseService } from './../house/house.service';
+import { House } from './../house/entities/house.entity';
 import {
   BadRequestException,
   Injectable,
@@ -5,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './User.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeepPartial, DeleteResult, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/CreateUser.dto';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -16,6 +18,7 @@ export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private configService: ConfigService,
+    private houseService: HouseService,
   ) {}
 
   findAll(): Promise<User[]> {
@@ -29,7 +32,7 @@ export class UserService {
       },
     });
     if (!user) {
-      throw new NotFoundException();
+      throw new NotFoundException('User not found');
     }
     return user;
   }
@@ -43,15 +46,20 @@ export class UserService {
   }
 
   async createUser(userDto: CreateUserDto): Promise<User> {
+    let newUserDto: DeepPartial<User> = {
+      ...userDto,
+    };
+    if (userDto.houseId) {
+      const house: House = await this.houseService.findOne(userDto.houseId);
+      newUserDto.house = house;
+    }
     const saltOrRounds: number = +this.configService.get('SALT_OR_ROUNDS');
     const password: string = await bcrypt.hash(userDto.password, saltOrRounds);
+    newUserDto.password = password;
 
-    const newUser = this.userRepository.create({
-      ...userDto,
-      password,
-    });
+    const newUser = this.userRepository.create(newUserDto);
 
-    await this.userRepository.insert(newUser).catch((e) => {
+    await this.userRepository.save(newUser).catch((e) => {
       if (e.code === '23505')
         throw new BadRequestException('Username already taken');
     });
@@ -59,15 +67,12 @@ export class UserService {
     return newUser;
   }
 
-  async updateUser(
-    userId: string,
-    userDto: UpdateUserDto,
-  ): Promise<{ affected: UpdateResult['affected'] }> {
-    const { affected }: UpdateResult = await this.userRepository.update(
-      { userId },
-      userDto,
-    );
-    return { affected };
+  async updateUser(userId: string, userDto: UpdateUserDto): Promise<User> {
+    const { houseId, ...updatedUser } = userDto;
+    const house = await this.houseService.findOne(houseId);
+    const user = await this.findById(userId);
+    user.house = house;
+    return await this.userRepository.save({ ...user, ...updatedUser });
   }
 
   async deleteUser(userId: string): Promise<Omit<DeleteResult, 'raw'>> {

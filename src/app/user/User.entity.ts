@@ -2,10 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { randomUUID } from 'crypto';
+import { House } from '../house/entities/house.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -31,4 +33,12 @@ export class User {
   @Column({ type: 'varchar', default: null, nullable: true })
   @Exclude()
   token: string;
+
+  @ManyToOne(() => House, (house) => house.players, {
+    cascade: true,
+    eager: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'houseId' })
+  house: House;
 }
