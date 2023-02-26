@@ -1,4 +1,4 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateRoundDto } from './create-round.dto';
+import { CreateRoundDto } from './CreateRound.dto';
 
 export class UpdateRoundDto extends PartialType(CreateRoundDto) {}
