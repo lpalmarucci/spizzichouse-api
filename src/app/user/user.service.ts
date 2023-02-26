@@ -46,13 +46,13 @@ export class UserService {
     const saltOrRounds: number = +this.configService.get('SALT_OR_ROUNDS');
     const password: string = await bcrypt.hash(userDto.password, saltOrRounds);
 
-    const newUser: User = this.userRepository.create({
+    const newUser = this.userRepository.create({
       ...userDto,
       password,
     });
 
     await this.userRepository.insert(newUser).catch((e) => {
-      if (e.code === 11000)
+      if (e.code === '23505')
         throw new BadRequestException('Username already taken');
     });
 
