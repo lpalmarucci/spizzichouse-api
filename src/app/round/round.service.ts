@@ -20,7 +20,7 @@ export class RoundService {
   async create(createRoundDto: CreateRoundDto) {
     const { userId, ...newUserDto } = createRoundDto;
     const user = await this.userService.findById(userId);
-    return this.roundRepository.save({ ...newUserDto, user }, {});
+    return this.roundRepository.save({ ...newUserDto, user });
   }
 
   async findAll(): Promise<Round[]> {

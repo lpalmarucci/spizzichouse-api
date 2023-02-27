@@ -1,7 +1,6 @@
 import {
   ClassSerializerInterceptor,
   Controller,
-  SerializeOptions,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';

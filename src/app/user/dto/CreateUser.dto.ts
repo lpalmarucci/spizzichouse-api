@@ -19,5 +19,5 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsString()
-  houseId: string;
+  locationId: string;
 }

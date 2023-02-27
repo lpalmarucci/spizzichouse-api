@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { HouseService } from './location.service';
-import { HouseController } from './location.controller';
+import { LocationService } from './location.service';
+import { LocationController } from './location.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { House } from './entities/location.entity';
+import { Location } from './entities/location.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([House])],
-  controllers: [HouseController],
-  providers: [HouseService],
-  exports: [HouseService],
+  imports: [TypeOrmModule.forFeature([Location])],
+  controllers: [LocationController],
+  providers: [LocationService],
+  exports: [LocationService],
 })
-export class HouseModule {}
+export class LocationModule {}

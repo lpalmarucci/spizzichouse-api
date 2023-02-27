@@ -6,7 +6,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { UserModule } from './app/user/user.module';
-import { HouseModule } from './app/location/location.module';
+import { LocationModule } from './app/location/location.module';
+import { MatchModule } from './app/match/match.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { HouseModule } from './app/location/location.module';
     }),
     UserModule,
     AuthenticationModule,
-    HouseModule,
+    LocationModule,
+    MatchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
