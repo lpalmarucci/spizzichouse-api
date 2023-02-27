@@ -9,12 +9,12 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { HouseService } from './house.service';
-import { CreateHouseDto } from './dto/CreateHouse.dto';
-import { UpdateHouseDto } from './dto/UpdateHouse.dto';
+import { HouseService } from './location.service';
+import { CreateHouseDto } from './dto/CreateLocation.dto';
+import { UpdateHouseDto } from './dto/UpdateLocation.dto';
 import { BaseController } from '../shared/controller/BaseController';
 
-@Controller('house')
+@Controller('locations')
 export class HouseController extends BaseController {
   constructor(private readonly houseService: HouseService) {
     super();

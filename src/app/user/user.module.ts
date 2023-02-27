@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { User } from './User.entity';
-import { HouseModule } from '../house/house.module';
+import { HouseModule } from '../location/location.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), HouseModule],

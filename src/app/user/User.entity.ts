@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { House } from '../house/entities/house.entity';
+import { House } from '../location/entities/location.entity';
 
 @Entity({ name: 'users' })
 export class User {

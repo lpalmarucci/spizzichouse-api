@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { UserModule } from './app/user/user.module';
-import { HouseModule } from './app/house/house.module';
+import { HouseModule } from './app/location/location.module';
 
 @Module({
   imports: [

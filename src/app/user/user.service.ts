@@ -1,5 +1,5 @@
-import { HouseService } from './../house/house.service';
-import { House } from './../house/entities/house.entity';
+import { HouseService } from '../location/location.service';
+import { House } from '../location/entities/location.entity';
 import {
   BadRequestException,
   Injectable,

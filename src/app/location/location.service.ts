@@ -3,10 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateHouseDto } from './dto/CreateHouse.dto';
-import { UpdateHouseDto } from './dto/UpdateHouse.dto';
+import { CreateHouseDto } from './dto/CreateLocation.dto';
+import { UpdateHouseDto } from './dto/UpdateLocation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { House } from './entities/house.entity';
+import { House } from './entities/location.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
