@@ -44,7 +44,6 @@ export class User {
 
   @ManyToOne(() => Location, (house) => house.players, {
     cascade: true,
-    eager: true,
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'locationId' })
