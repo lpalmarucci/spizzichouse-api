@@ -1,7 +1,12 @@
 import { UserService } from '../user/user.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { CreateMatchDto } from './dto/CreateMatch.dto';
 import { UpdateMatchDto } from './dto/UpdateMatch.dto';
 import { Match } from './entities/match.entity';
@@ -14,8 +19,10 @@ export class MatchService {
   constructor(
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
-    private readonly userService: UserService,
+    @Inject(forwardRef(() => LocationService))
     private readonly locationService: LocationService,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
   ) {}
 
   async create(createPlayDto: CreateMatchDto) {

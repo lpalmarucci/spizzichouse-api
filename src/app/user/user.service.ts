@@ -2,6 +2,8 @@ import { LocationService } from '../location/location.service';
 import { Location } from '../location/entities/location.entity';
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -18,6 +20,7 @@ export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private configService: ConfigService,
+    @Inject(forwardRef(() => LocationService))
     private houseService: LocationService,
   ) {}
 
@@ -46,7 +49,7 @@ export class UserService {
   }
 
   async createUser(userDto: CreateUserDto): Promise<User> {
-    let newUserDto: DeepPartial<User> = {
+    const newUserDto: DeepPartial<User> = {
       ...userDto,
     };
     if (userDto.locationId) {
