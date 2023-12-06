@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '@/user/user.module';
+import config from '@/config';
 
 @Module({
   imports: [
@@ -19,7 +20,9 @@ import { UserModule } from '@/user/user.module';
         synchronize: process.env.NODE_ENV === 'development',
       }),
     }),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      load: [config],
+    }),
     UserModule,
   ],
   controllers: [AppController],
