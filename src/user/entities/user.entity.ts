@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Location } from '@/location/entities/location.entity';
 
 @Entity()
 export class User {
@@ -22,6 +24,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @ManyToOne(() => Location, (location) => location.users)
+  location?: Location;
 
   @CreateDateColumn()
   createdAt: Date;
