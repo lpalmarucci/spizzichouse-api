@@ -22,12 +22,12 @@ export class UserController {
 
   @Get()
   findAll() {
-    return this.userService.findAll();
+    return this.userService.findAll({ location: true });
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+    return this.userService.findOne(+id, { location: true });
   }
 
   @Patch(':id')

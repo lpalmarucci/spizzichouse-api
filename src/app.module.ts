@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '@/user/user.module';
+import { LocationModule } from './location/location.module';
 import config from '@/config';
 
 @Module({
@@ -17,6 +18,7 @@ import config from '@/config';
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
         autoLoadEntities: true,
+        entities: ['src/**/*{.entity.ts}'],
         synchronize: process.env.NODE_ENV === 'development',
       }),
     }),
@@ -24,6 +26,7 @@ import config from '@/config';
       load: [config],
     }),
     UserModule,
+    LocationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
