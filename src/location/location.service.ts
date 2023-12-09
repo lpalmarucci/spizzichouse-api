@@ -68,6 +68,6 @@ export class LocationService {
 
   async remove(id: number) {
     const location = await this.findOne(id);
-    return this.locationRepository.delete(location);
+    return this.locationRepository.remove(location);
   }
 }
