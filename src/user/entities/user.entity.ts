@@ -2,8 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -30,7 +30,7 @@ export class User {
   @ManyToOne(() => Location, (location) => location.users)
   location?: Location;
 
-  @ManyToMany(() => Round, (round) => round.users)
+  @OneToMany(() => Round, (round) => round.user)
   round: Round[];
 
   @CreateDateColumn()

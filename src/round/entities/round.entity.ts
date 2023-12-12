@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Match } from '@/match/entities/match.entity';
 import { User } from '@/user/entities/user.entity';
 
@@ -20,10 +13,9 @@ export class Round {
   @Column()
   numPoints: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: false })
   isGameLost?: boolean;
 
-  @ManyToMany(() => User, (user) => user.round)
-  @JoinTable()
-  users: User[];
+  @ManyToOne(() => User, (user) => user.round)
+  user: User;
 }

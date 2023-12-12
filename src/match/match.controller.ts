@@ -10,10 +10,14 @@ import {
 import { MatchService } from './match.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
+import { RoundService } from '@/round/round.service';
 
 @Controller('match')
 export class MatchController {
-  constructor(private readonly matchService: MatchService) {}
+  constructor(
+    private readonly matchService: MatchService,
+    private readonly roundService: RoundService,
+  ) {}
 
   @Post()
   create(@Body() createMatchDto: CreateMatchDto) {
@@ -38,5 +42,10 @@ export class MatchController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.matchService.remove(+id);
+  }
+
+  @Get(':id/round')
+  getRounds(@Param('id') matchId: number) {
+    return this.roundService.getByMatchId(matchId);
   }
 }

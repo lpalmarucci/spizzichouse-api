@@ -25,6 +25,9 @@ export class Match {
   @ManyToOne(() => Location, (location) => location.match)
   location: Location;
 
-  @OneToMany(() => Round, (round) => round.match, { nullable: true })
+  @OneToMany(() => Round, (round) => round.match, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   rounds: Round[];
 }
