@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { MatchService } from './match.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
@@ -14,12 +22,12 @@ export class MatchController {
 
   @Get()
   findAll() {
-    return this.matchService.findAll();
+    return this.matchService.findAll({ location: true });
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.matchService.findOne(+id);
+    return this.matchService.findOne(+id, { location: true, rounds: true });
   }
 
   @Patch(':id')

@@ -3,10 +3,12 @@ import { MatchService } from './match.service';
 import { MatchController } from './match.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Match } from '@/match/entities/match.entity';
+import { LocationModule } from '@/location/location.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Match])],
+  imports: [TypeOrmModule.forFeature([Match]), LocationModule],
   controllers: [MatchController],
   providers: [MatchService],
+  exports: [MatchService],
 })
 export class MatchModule {}
