@@ -3,10 +3,12 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Location } from '@/location/entities/location.entity';
+import { Round } from '@/round/entities/round.entity';
 
 @Entity()
 export class User {
@@ -27,6 +29,9 @@ export class User {
 
   @ManyToOne(() => Location, (location) => location.users)
   location?: Location;
+
+  @OneToMany(() => Round, (round) => round.user)
+  round: Round[];
 
   @CreateDateColumn()
   createdAt: Date;
