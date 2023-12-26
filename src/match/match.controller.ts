@@ -11,8 +11,10 @@ import { MatchService } from './match.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { RoundService } from '@/round/round.service';
+import { CreateRoundDto } from '@/round/dto/create-round.dto';
+import { UpdateRoundDto } from '@/round/dto/update-round.dto';
 
-@Controller('match')
+@Controller('matches')
 export class MatchController {
   constructor(
     private readonly matchService: MatchService,
@@ -44,8 +46,50 @@ export class MatchController {
     return this.matchService.remove(+id);
   }
 
-  @Get(':id/round')
-  getRounds(@Param('id') matchId: number) {
-    return this.roundService.getByMatchId(matchId);
+  //ROUND
+  @Get(':matchId/rounds')
+  getRoundsByMatch(@Param('matchId') matchId: number) {
+    return this.roundService.getByMatch(matchId);
+  }
+
+  @Get(':matchId/users/:userId/rounds')
+  getRoundsByMatchAndUser(
+    @Param('matchId') matchId: number,
+    @Param('userId') userId: number,
+  ) {
+    return this.roundService.getByMatchAndUser(matchId, userId);
+  }
+
+  @Post(':matchId/users/:userId/rounds/:roundId')
+  createRoundForMatchAndUser(
+    @Param('matchId') matchId: number,
+    @Param('userId') userId: number,
+    @Param('roundId') roundId: number,
+    @Body() createRoundDto: CreateRoundDto,
+  ) {
+    return this.roundService.create(matchId, userId, roundId, createRoundDto);
+  }
+
+  @Patch(':matchId/users/:userId/rounds/:roundId')
+  updateRoundForMatchAndUser(
+    @Param('matchId') matchId: number,
+    @Param('userId') userId: number,
+    @Param('roundId') roundId: number,
+    @Body() updateRoundDto: UpdateRoundDto,
+  ) {
+    return this.roundService.update(matchId, userId, roundId, updateRoundDto);
+  }
+
+  @Delete(':matchId/users/:userId/rounds/:roundId')
+  deleteRoundForMatchAndUser(
+    @Param('matchId') matchId: number,
+    @Param('userId') userId: number,
+    @Param('roundId') roundId: number,
+  ) {
+    return this.roundService.deleteRoundForMatchAndUser(
+      matchId,
+      userId,
+      roundId,
+    );
   }
 }

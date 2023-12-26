@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateRoundDto } from './dto/create-round.dto';
 import { UpdateRoundDto } from './dto/update-round.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,45 +21,115 @@ export class RoundService {
     private readonly userService: UserService,
     private readonly matchService: MatchService,
   ) {}
-  async create(matchId: number, createRoundDto: CreateRoundDto) {
+  async create(
+    matchId: number,
+    userId: number,
+    roundId: number,
+    createRoundDto: CreateRoundDto,
+  ) {
     const match = await this.matchService.findOne(matchId);
-    const user = await this.userService.findOne(createRoundDto.userId);
+    const user = await this.userService.findOne(userId);
+    const existingRound = await this.getByMatchAndUser(matchId, userId);
+
+    if (existingRound.length > 0) {
+      throw new HttpException(
+        'A round for this user and match already exists',
+        HttpStatus.CONFLICT,
+      );
+    }
 
     const round = this.roundRepository.create({
       ...createRoundDto,
+      roundId,
       match,
       user,
     });
     return this.roundRepository.save(round);
   }
 
-  findAll(relations?: FindOptionsRelations<Round>) {
-    return this.roundRepository.find({ relations });
+  async getByMatch(id: number) {
+    const match = await this.matchService.findOne(id);
+    return this.roundRepository.find({ where: { match: { id } } });
   }
 
-  async findOne(id: number) {
-    const round = await this.roundRepository.findOne({ where: { id } });
-    if (!round) throw new NotFoundException(`Round ${id} not found`);
+  getByMatchAndUser(
+    matchId: number,
+    userId: number,
+    relations?: FindOptionsRelations<Round>,
+  ) {
+    return this.roundRepository.find({
+      where: {
+        match: { id: matchId },
+        user: { id: userId },
+      },
+      relations,
+    });
+  }
+
+  getSpecificRound(
+    roundId: number,
+    matchId: number,
+    userId: number,
+  ): Promise<Round> {
+    const round = this.roundRepository.findOne({
+      where: {
+        roundId,
+        matchId,
+        userId,
+      },
+    });
+    if (!round) {
+      throw new NotFoundException(
+        `Unable to find round number ${roundId} for the match ${matchId} and user ${userId}`,
+      );
+    }
     return round;
   }
 
-  async update(id: number, updateRoundDto: UpdateRoundDto) {
-    const round = await this.roundRepository.preload({
-      id,
-      ...updateRoundDto,
-    });
-    if (!round) throw new NotFoundException(`Round ${id} not found`);
-    return this.roundRepository.save(round);
-  }
-
-  async remove(id: number) {
-    const round = await this.findOne(id);
-    await this.roundRepository.remove(round);
-    return { id };
-  }
-
-  async getByMatchId(matchId: number) {
+  async findOne(matchId: number, userId: number, roundId: number) {
+    const user = await this.userService.findOne(userId);
     const match = await this.matchService.findOne(matchId);
-    return this.roundRepository.find({ where: { match } });
+    const round = await this.roundRepository.findOne({
+      where: {
+        user,
+        match,
+        roundId,
+      },
+    });
+    if (!round)
+      throw new NotFoundException(`Round number ${roundId} not found`);
+    return round;
+  }
+
+  async update(
+    matchId: number,
+    userId: number,
+    roundId: number,
+    updateRoundDto: UpdateRoundDto,
+  ) {
+    try {
+      await this.roundRepository
+        .createQueryBuilder()
+        .update(Round)
+        .set({ points: updateRoundDto.points })
+        .where('roundId = :roundId', { roundId })
+        .andWhere('userId = :userId', { userId })
+        .andWhere('matchId = :matchId', { matchId })
+        .execute();
+    } catch (error) {
+      console.error('Error updating points:', error);
+      throw new InternalServerErrorException(error.message);
+    }
+
+    return this.getSpecificRound(roundId, matchId, userId);
+  }
+
+  async deleteRoundForMatchAndUser(
+    matchId: number,
+    userId: number,
+    roundId: number,
+  ) {
+    const round = await this.getSpecificRound(roundId, matchId, userId);
+    return this.roundRepository.remove(round);
   }
 }
