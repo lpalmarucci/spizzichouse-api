@@ -7,6 +7,7 @@ import { UserModule } from '@/user/user.module';
 import { LocationModule } from './location/location.module';
 import { MatchModule } from './match/match.module';
 import { RoundModule } from './round/round.module';
+import { AuthModule } from './auth/auth.module';
 import config from '@/config';
 
 @Module({
@@ -31,6 +32,7 @@ import config from '@/config';
     LocationModule,
     MatchModule,
     RoundModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
