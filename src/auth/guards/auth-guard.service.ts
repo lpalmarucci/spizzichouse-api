@@ -42,6 +42,7 @@ export class AuthGuard implements CanActivate {
         'An error occurred while validating jwt passing in the Authorization header',
       );
       console.error(e.message);
+      return false;
     }
     return true;
   }
