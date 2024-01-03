@@ -1,6 +1,5 @@
 import {
-  HttpException,
-  HttpStatus,
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -27,14 +26,20 @@ export class RoundService {
     roundId: number,
     createRoundDto: CreateRoundDto,
   ) {
-    const match = await this.matchService.findOne(matchId);
+    const match = await this.matchService.findOne(matchId, { users: true });
     const user = await this.userService.findOne(userId);
-    const existingRound = await this.getByMatchAndUser(matchId, userId);
 
-    if (existingRound.length > 0) {
-      throw new HttpException(
-        'A round for this user and match already exists',
-        HttpStatus.CONFLICT,
+    if (!match.users.find((u) => u.id === user.id)) {
+      throw new BadRequestException(
+        `The user with id ${userId} was not found among the list of available players for this match`,
+      );
+    }
+
+    const existingRound = await this.getSpecificRound(roundId, matchId, userId);
+
+    if (existingRound) {
+      throw new BadRequestException(
+        "There's already a round set for this match and user",
       );
     }
 
@@ -48,8 +53,10 @@ export class RoundService {
   }
 
   async getByMatch(id: number) {
-    const match = await this.matchService.findOne(id);
-    return this.roundRepository.find({ where: { match: { id } } });
+    return this.roundRepository.find({
+      where: { match: { id } },
+      order: { roundId: 1 },
+    });
   }
 
   getByMatchAndUser(
