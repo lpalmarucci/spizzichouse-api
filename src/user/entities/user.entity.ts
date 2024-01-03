@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -9,6 +10,7 @@ import {
 } from 'typeorm';
 import { Location } from '@/location/entities/location.entity';
 import { Round } from '@/round/entities/round.entity';
+import { Match } from '@/match/entities/match.entity';
 
 @Entity()
 export class User {
@@ -29,6 +31,9 @@ export class User {
 
   @ManyToOne(() => Location, (location) => location.users)
   location?: Location;
+
+  @ManyToMany(() => Match, (match) => match.users, { cascade: true })
+  matches?: Match[];
 
   @OneToMany(() => Round, (round) => round.user)
   round: Round[];

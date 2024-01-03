@@ -28,12 +28,16 @@ export class MatchController {
 
   @Get()
   findAll() {
-    return this.matchService.findAll({ location: true });
+    return this.matchService.findAll({ location: true, users: true });
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.matchService.findOne(+id, { location: true, rounds: true });
+    return this.matchService.findOne(+id, {
+      location: true,
+      rounds: true,
+      users: true,
+    });
   }
 
   @Patch(':id')

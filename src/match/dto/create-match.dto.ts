@@ -4,12 +4,12 @@ export class CreateMatchDto {
   @IsPositive()
   locationId: number;
 
+  @IsPositive({ each: true })
+  userIds: number[];
+
   @IsOptional()
   @IsBoolean()
   inProgress?: boolean;
-
-  @IsInt()
-  maxPointsEachRound: number;
 
   @IsInt()
   totalPoints: number;

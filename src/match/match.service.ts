@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Match } from '@/match/entities/match.entity';
 import { FindOptionsRelations, Repository } from 'typeorm';
 import { LocationService } from '@/location/location.service';
+import { UserService } from '@/user/user.service';
 
 @Injectable()
 export class MatchService {
@@ -12,13 +13,24 @@ export class MatchService {
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
     private readonly locationService: LocationService,
+    private readonly userService: UserService,
   ) {}
   async create(createMatchDto: CreateMatchDto) {
     const location =
       createMatchDto.locationId &&
       (await this.locationService.findOne(createMatchDto.locationId));
 
-    const match = this.matchRepository.create({ ...createMatchDto, location });
+    const users =
+      createMatchDto.userIds &&
+      (await Promise.all(
+        createMatchDto.userIds.map((id) => this.userService.findOne(id)),
+      ));
+
+    const match = this.matchRepository.create({
+      ...createMatchDto,
+      location,
+      users,
+    });
     return this.matchRepository.save(match);
   }
 
