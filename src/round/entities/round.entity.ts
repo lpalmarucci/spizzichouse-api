@@ -26,7 +26,7 @@ export class Round {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Match, (match) => match.rounds, { nullable: false })
+  @ManyToOne(() => Match, (match) => match.rounds, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'matchId' })
   match: Match;
 

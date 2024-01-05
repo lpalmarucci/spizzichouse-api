@@ -31,6 +31,7 @@ export class Match {
 
   @OneToMany(() => Round, (round) => round.match, {
     nullable: true,
+    cascade: true,
     onDelete: 'CASCADE',
   })
   rounds: Round[];
