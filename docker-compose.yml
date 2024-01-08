@@ -17,11 +17,14 @@ services:
       - spizzichouse-network
 
   api:
+    container_name: api
     image: spizzichouse-api:${API_VERSION}
     ports:
       - "8080:3000"
     depends_on:
       - db
+    env_file:
+      - ./.env
     build:
       context: .
       dockerfile: Dockerfile
