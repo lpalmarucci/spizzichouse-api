@@ -26,8 +26,10 @@ export class Match {
   @JoinTable({ name: 'users_matches' })
   users: User[];
 
-  @ManyToOne(() => Location, (location) => location.match)
-  location: Location;
+  @ManyToOne(() => Location, (location) => location.match, {
+    onDelete: 'SET NULL',
+  })
+  location?: Location;
 
   @OneToMany(() => Round, (round) => round.match, {
     nullable: true,

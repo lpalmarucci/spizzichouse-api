@@ -29,7 +29,9 @@ export class User {
   @Column()
   password: string;
 
-  @ManyToOne(() => Location, (location) => location.users)
+  @ManyToOne(() => Location, (location) => location.users, {
+    onDelete: 'SET NULL',
+  })
   location?: Location;
 
   @ManyToMany(() => Match, (match) => match.users, { cascade: true })
