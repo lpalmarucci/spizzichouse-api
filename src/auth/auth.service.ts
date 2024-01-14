@@ -23,12 +23,32 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     const payload = { sub: user.id, username: user.username };
+    const token = this._jwtService.sign(payload, {
+      secret: this._jwtSettings.jwtSecret,
+      expiresIn: this._jwtSettings.jwtExpiration,
+    });
+    const expirationDate = this.getExpirationTime(token);
     return {
-      access_token: this._jwtService.sign(payload),
+      access_token: token,
       firstname: user.firstname,
       lastname: user.lastname,
       username: user.username,
-      expiresIn: this._jwtSettings.jwtExpiration,
+      expiresIn: expirationDate,
     };
+  }
+
+  getExpirationTime(token: string): number | null {
+    try {
+      const decodedToken: any = this._jwtService.verify(token, {
+        secret: this._jwtSettings.jwtSecret,
+      });
+      if (decodedToken && decodedToken.exp) {
+        return decodedToken.exp; // Convert from seconds to milliseconds
+      }
+    } catch (error) {
+      console.error('Error decoding token:', error.message);
+    }
+
+    return null;
   }
 }
