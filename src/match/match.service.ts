@@ -3,9 +3,10 @@ import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Match } from '@/match/entities/match.entity';
-import { FindOptionsRelations, Repository } from 'typeorm';
+import { Equal, FindOptionsRelations, Repository } from 'typeorm';
 import { LocationService } from '@/location/location.service';
 import { UserService } from '@/user/user.service';
+import { User } from '@/user/entities/user.entity';
 
 @Injectable()
 export class MatchService {
