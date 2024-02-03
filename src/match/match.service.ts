@@ -64,4 +64,48 @@ export class MatchService {
     const match = await this.findOne(id);
     return this.matchRepository.remove(match);
   }
+
+  async endMatch(id: number, updateMatchDto: UpdateMatchDto) {
+    const match = await this.findOne(id, { users: true, rounds: true });
+
+    let userDead: { user: User; points: number };
+    match.users.forEach((user) => {
+      const userPoints = match.rounds
+        .filter((r) => r.userId === user.id)
+        .reduce((tot, r) => tot + r.points, 0);
+
+      if (!userDead || userPoints > userDead.points)
+        userDead = { user, points: userPoints };
+    });
+
+    const winners = match.users.filter((user) => user.id !== userDead.user.id);
+    const updateWinnersCount = winners.map(
+      async (user) =>
+        await this.userService.update(user.id, {
+          totalWins: user.totalWins + 1,
+          totalPlayed: user.totalPlayed + 1,
+        }),
+    );
+
+    await this.userService.update(userDead.user.id, {
+      totalPlayed: userDead.user.totalPlayed + 1,
+    });
+
+    await Promise.all(updateWinnersCount);
+
+    const newLocation = await this.matchRepository.preload({
+      id,
+      ...updateMatchDto,
+      inProgress: false,
+    });
+    return this.matchRepository.save(newLocation);
+  }
+
+  async findByUser(userId: number) {
+    return this.matchRepository.findBy({
+      users: {
+        id: Equal(userId),
+      },
+    });
+  }
 }
