@@ -40,6 +40,12 @@ export class User {
   @OneToMany(() => Round, (round) => round.user)
   round: Round[];
 
+  @Column({ type: 'integer', default: 0 })
+  totalWins: number;
+
+  @Column({ type: 'integer', default: 0 })
+  totalPlayed: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
