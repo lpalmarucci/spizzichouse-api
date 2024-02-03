@@ -17,7 +17,15 @@ export class AuthService {
   }
 
   async signIn(username: string, pass: string): Promise<any> {
-    const user = await this._userService.getByUsername(username);
+    const user = await this._userService.getByUsername(username, {
+      select: {
+        id: true,
+        firstname: true,
+        lastname: true,
+        username: true,
+        password: true,
+      },
+    });
 
     if (!user) throw new BadRequestException('User not found');
 

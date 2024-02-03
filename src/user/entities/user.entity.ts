@@ -26,7 +26,7 @@ export class User {
   @Column()
   username: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @ManyToOne(() => Location, (location) => location.users, {

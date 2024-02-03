@@ -9,7 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/user/entities/user.entity';
-import { FindOptionsRelations, Repository } from 'typeorm';
+import { FindOneOptions, FindOptionsRelations, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { LocationService } from '@/location/location.service';
@@ -63,8 +63,12 @@ export class UserService {
     return users.map(UserDto.fromEntity);
   }
 
-  async getByUsername(username: string): Promise<User> {
+  async getByUsername(
+    username: string,
+    options?: FindOneOptions<User>,
+  ): Promise<User> {
     const user = await this.userRepository.findOne({
+      ...options,
       where: { username },
     });
     if (!user) throw new NotFoundException(`User ${username} not found`);
