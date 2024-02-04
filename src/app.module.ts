@@ -9,6 +9,7 @@ import { MatchModule } from './match/match.module';
 import { RoundModule } from './round/round.module';
 import { AuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { MatchHistoryModule } from './match-history/match-history.module';
 import config from '@/config';
 
 @Module({
@@ -38,6 +39,7 @@ import config from '@/config';
     RoundModule,
     AuthModule,
     DashboardModule,
+    MatchHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
