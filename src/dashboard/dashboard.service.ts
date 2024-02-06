@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { MatchService } from '@/match/match.service';
+import { MatchHistoryService } from '@/match-history/match-history.service';
 
 @Injectable()
 export class DashboardService {
-  constructor(private readonly _matchService: MatchService) {}
+  constructor(private readonly _matchHistoryService: MatchHistoryService) {}
 
   async getRanking() {}
 
   async getSummary(userId: number) {
-    const usersMatch = await this._matchService.findByUser(userId);
-    return usersMatch;
+    return this._matchHistoryService.getByUser(userId, {
+      take: 5,
+    });
   }
 }

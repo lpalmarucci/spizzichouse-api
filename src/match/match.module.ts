@@ -6,6 +6,7 @@ import { Match } from '@/match/entities/match.entity';
 import { LocationModule } from '@/location/location.module';
 import { RoundModule } from '@/round/round.module';
 import { UserModule } from '@/user/user.module';
+import { MatchHistoryModule } from '@/match-history/match-history.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UserModule } from '@/user/user.module';
     LocationModule,
     forwardRef(() => RoundModule),
     UserModule,
+    forwardRef(() => MatchHistoryModule),
   ],
   controllers: [MatchController],
   providers: [MatchService],

@@ -11,18 +11,22 @@ import { Match } from '@/match/entities/match.entity';
 
 @Entity()
 @Unique(['matchId', 'userId'])
-export class MatchHistoryEntity {
+export class MatchHistory {
   @PrimaryColumn()
   matchId: number;
 
   @PrimaryColumn()
   userId: number;
 
-  @ManyToOne(() => User, (user) => user.round, { eager: true, nullable: false })
+  @ManyToOne(() => User, (user) => user.round, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Match, (match) => match.rounds, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Match, (match) => match.rounds, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'matchId' })
   match: Match;
 

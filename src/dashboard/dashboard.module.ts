@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { DashboardController } from './dashboard.controller';
 import { UserModule } from '@/user/user.module';
-import { MatchModule } from '@/match/match.module';
+import { MatchHistoryModule } from '@/match-history/match-history.module';
 
 @Module({
-  imports: [UserModule, MatchModule],
+  imports: [UserModule, MatchHistoryModule],
   controllers: [DashboardController],
   providers: [DashboardService],
 })
