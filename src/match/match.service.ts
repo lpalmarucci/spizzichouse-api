@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +13,7 @@ import { Equal, FindOptionsRelations, Repository } from 'typeorm';
 import { LocationService } from '@/location/location.service';
 import { UserService } from '@/user/user.service';
 import { User } from '@/user/entities/user.entity';
+import { MatchHistoryService } from '@/match-history/match-history.service';
 
 @Injectable()
 export class MatchService {
@@ -15,6 +22,8 @@ export class MatchService {
     private readonly matchRepository: Repository<Match>,
     private readonly locationService: LocationService,
     private readonly userService: UserService,
+    @Inject(forwardRef(() => MatchHistoryService))
+    private readonly _matchHistoryService: MatchHistoryService,
   ) {}
   async create(createMatchDto: CreateMatchDto) {
     const location =
@@ -68,28 +77,41 @@ export class MatchService {
 
   async endMatch(id: number, updateMatchDto: UpdateMatchDto) {
     const match = await this.findOne(id, { users: true, rounds: true });
+    if (!match.inProgress) {
+      throw new BadRequestException('This match is already ended');
+    }
 
-    let userDead: { user: User; points: number };
+    let userDead: { user: User; score: number };
+
+    const usersWithPoints: { userId: number; score: number }[] = [];
     match.users.forEach((user) => {
-      const userPoints = match.rounds
+      const userScore = match.rounds
         .filter((r) => r.userId === user.id)
         .reduce((tot, r) => tot + r.points, 0);
 
-      if (!userDead || userPoints > userDead.points)
-        userDead = { user, points: userPoints };
+      usersWithPoints.push({ userId: user.id, score: userScore });
+      if (!userDead || userScore > userDead.score)
+        userDead = { user, score: userScore };
     });
 
-    const winners = match.users.filter((user) => user.id !== userDead.user.id);
+    const winners = usersWithPoints.filter(
+      (user) => user.userId !== userDead.user.id,
+    );
     const updateWinnersCount = winners.map(
       async (user) =>
-        await this.userService.update(user.id, {
-          totalWins: user.totalWins + 1,
-          totalPlayed: user.totalPlayed + 1,
+        await this._matchHistoryService.create({
+          matchId: id,
+          userId: user.userId,
+          win: true,
+          totalScore: user.score,
         }),
     );
 
-    await this.userService.update(userDead.user.id, {
-      totalPlayed: userDead.user.totalPlayed + 1,
+    await this._matchHistoryService.create({
+      matchId: id,
+      userId: userDead.user.id,
+      win: false,
+      totalScore: userDead.score,
     });
 
     await Promise.all(updateWinnersCount);

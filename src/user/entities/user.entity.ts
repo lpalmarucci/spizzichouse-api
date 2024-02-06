@@ -11,7 +11,7 @@ import {
 import { Location } from '@/location/entities/location.entity';
 import { Round } from '@/round/entities/round.entity';
 import { Match } from '@/match/entities/match.entity';
-import { MatchHistoryEntity } from '@/match-history/entities/match-history.entity';
+import { MatchHistory } from '@/match-history/entities/match.history.entity';
 
 @Entity()
 export class User {
@@ -41,11 +41,11 @@ export class User {
   @OneToMany(() => Round, (round) => round.user)
   round: Round[];
 
-  @OneToMany(() => MatchHistoryEntity, (mh) => mh.user, {
+  @OneToMany(() => MatchHistory, (mh) => mh.user, {
     eager: false,
     lazy: true,
   })
-  matchHistory: MatchHistoryEntity;
+  matchHistory: MatchHistory;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -10,7 +10,7 @@ import {
 import { Round } from '@/round/entities/round.entity';
 import { Location } from '@/location/entities/location.entity';
 import { User } from '@/user/entities/user.entity';
-import { MatchHistoryEntity } from '@/match-history/entities/match-history.entity';
+import { MatchHistory } from '@/match-history/entities/match.history.entity';
 
 @Entity()
 export class Match {
@@ -39,9 +39,9 @@ export class Match {
   })
   rounds: Round[];
 
-  @OneToMany(() => MatchHistoryEntity, (mh) => mh.match, {
+  @OneToMany(() => MatchHistory, (mh) => mh.match, {
     eager: false,
     lazy: true,
   })
-  matchHistory: MatchHistoryEntity;
+  matchHistory: MatchHistory;
 }
