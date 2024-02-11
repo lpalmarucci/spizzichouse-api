@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserService } from '@/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
@@ -20,7 +20,7 @@ export class AuthService {
     const user = await this._userService.getByUsername(username);
 
     if (!bcrypt.compareSync(pass, user.password)) {
-      throw new UnauthorizedException();
+      throw new BadRequestException('Password is wrong');
     }
     const payload = { sub: user.id, username: user.username };
     const token = this._jwtService.sign(payload, {
