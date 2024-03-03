@@ -12,6 +12,8 @@ import { LoginDto } from '@/auth/dto/Login.dto';
 import { AuthService } from '@/auth/auth.service';
 import { AuthGuard } from '@/auth/guards/auth-guard.service';
 import { Public } from '@/common/decorators/public.decorator';
+import { RequestUser } from '@/common/types/RequestUser.types';
+import { UpdatePasswordDto } from '@/auth/dto/UpdatePassword.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -28,5 +30,11 @@ export class AuthController {
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
+  }
+
+  @Post('change-password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  changePassword(@Request() req: RequestUser, @Body() body: UpdatePasswordDto) {
+    return this._authService.updateUserPassword(req.user.sub, body.password);
   }
 }

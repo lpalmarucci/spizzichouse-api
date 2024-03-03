@@ -51,4 +51,8 @@ export class AuthService {
 
     return null;
   }
+
+  async updateUserPassword(userId: number, password: string) {
+    return this._userService.update(userId, { password });
+  }
 }
