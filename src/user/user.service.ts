@@ -74,7 +74,7 @@ export class UserService {
     const location =
       updateUserDto.locationId &&
       (await this.locationService.findOne(updateUserDto.locationId));
-    let newPassword: string = updateUserDto.password;
+    let newPassword: string | undefined;
     if (updateUserDto.password) {
       newPassword = await bcrypt.hash(
         updateUserDto.password,
