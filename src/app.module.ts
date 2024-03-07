@@ -8,7 +8,6 @@ import { LocationModule } from './location/location.module';
 import { MatchModule } from './match/match.module';
 import { RoundModule } from './round/round.module';
 import { AuthModule } from './auth/auth.module';
-import { CommonModule } from './common/common.module';
 import config from '@/config';
 
 @Module({
@@ -34,7 +33,6 @@ import config from '@/config';
     MatchModule,
     RoundModule,
     AuthModule,
-    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
