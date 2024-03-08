@@ -19,6 +19,8 @@ export class AuthService {
   async signIn(username: string, pass: string): Promise<any> {
     const user = await this._userService.getByUsername(username);
 
+    if (!user) throw new BadRequestException('User not found');
+
     if (!bcrypt.compareSync(pass, user.password)) {
       throw new BadRequestException('Password is wrong');
     }
