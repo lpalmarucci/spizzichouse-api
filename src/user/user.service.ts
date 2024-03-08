@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -28,6 +29,14 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const username = createUserDto.username;
+    const usernameAlreadyExists = await this.userRepository.findOne({
+      where: { username },
+    });
+    if (usernameAlreadyExists) {
+      throw new BadRequestException('username already taken');
+    }
+
     const location =
       createUserDto.locationId &&
       (await this.locationService.findOne(createUserDto.locationId));
