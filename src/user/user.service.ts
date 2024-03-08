@@ -28,7 +28,7 @@ export class UserService {
     );
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
     const username = createUserDto.username;
     const usernameAlreadyExists = await this.userRepository.findOne({
       where: { username },
@@ -50,7 +50,9 @@ export class UserService {
       password: hashPassword,
       location,
     });
-    return this.userRepository.save(user);
+    const newUser = await this.userRepository.save(user);
+    delete newUser.password;
+    return newUser;
   }
 
   findAll(relations?: FindOptionsRelations<User>) {
