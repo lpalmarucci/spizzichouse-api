@@ -20,9 +20,12 @@ import config from '@/config';
         username: process.env.DATABASE_USER,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
+        schema: process.env.DATABASE_SCHEMA,
         autoLoadEntities: true,
         entities: ['src/**/*{.entity.ts}'],
         synchronize: process.env.NODE_ENV === 'development',
+        migrations: ['./dist/migrations/*'],
+        migrationsRun: process.env.NODE_ENV !== 'development',
       }),
     }),
     ConfigModule.forRoot({
