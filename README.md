@@ -30,12 +30,12 @@ Questo backend fornisce l'infrastruttura necessaria per gestire le operazioni le
     ```bash
    pnpm i
    ```
-   
-3. Copia il contenuto del file <code>.env.sample</code> e copialo in un file chiamato <code>.env</code>
 
-4. Modifica le variabili inserendo i valori desiderati
+3. Rinomina il file <code>.env.sample</code> in <code>.env</code>
 
-3. Esegui il progetto
+4. Sostituisci i placeholder identificati da </code>`<some-value>`</code> con i valori corretti
+
+3. Esegui il progetto con il seguente comando
     ```bash
    pnpm run start:dev
    ```
