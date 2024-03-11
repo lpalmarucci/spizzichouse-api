@@ -9,4 +9,11 @@ export default (): IConfig => ({
     },
   },
   version: process.env.API_VERSION ?? '0.0.1',
+  auth: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    },
+    redirectUrl: process.env.REDIRECT_URL,
+  },
 });
