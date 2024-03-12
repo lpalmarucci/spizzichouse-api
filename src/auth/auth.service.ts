@@ -16,10 +16,24 @@ export class AuthService {
     this._jwtSettings = this._configService.get<ICryptConfig>('config.crypt');
   }
 
+  async validateUser(username: string, password: string) {
+    const user = await this._userService.getByUsername(username);
+    if (!bcrypt.compareSync(password, user.password)) {
+      return null;
+    }
+    const { password: pwd, ...result } = user;
+    return result;
+  }
+
+  async login(user: any) {
+    const payload = { username: user.username, sub: user.userId };
+    return {
+      access_token: this._jwtService.sign(payload),
+    };
+  }
+
   async signIn(username: string, pass: string): Promise<any> {
     const user = await this._userService.getByUsername(username);
-
-    if (!user) throw new BadRequestException('User not found');
 
     if (!bcrypt.compareSync(pass, user.password)) {
       throw new BadRequestException('Password is wrong');

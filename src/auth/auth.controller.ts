@@ -10,15 +10,14 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { LoginDto } from '@/auth/dto/Login.dto';
 import { AuthService } from '@/auth/auth.service';
-import { AuthGuard } from '@/auth/guards/auth-guard.service';
 import { Public } from '@/common/decorators/public.decorator';
 import { RequestUser } from '@/common/types/RequestUser.types';
 import { UpdatePasswordDto } from '@/auth/dto/UpdatePassword.dto';
 import { GoogleOAuthGuard } from '@/auth/guards/GoogleOauth.guard';
 import { Response as ResponseType } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { LocalAuthGuard } from '@/auth/guards/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -28,16 +27,11 @@ export class AuthController {
   ) {}
 
   @Public()
-  @HttpCode(HttpStatus.OK)
+  @UseGuards(LocalAuthGuard)
   @Post('login')
-  signIn(@Body() signInDto: LoginDto) {
-    return this._authService.signIn(signInDto.username, signInDto.password);
-  }
-
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  signIn(@Request() req: RequestUser) {
+    return this._authService.login(req.user);
+    // return this._authService.signIn(signInDto.username, signInDto.password);
   }
 
   @Post('change-password')
