@@ -13,6 +13,7 @@ import { FindOptionsRelations, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { LocationService } from '@/location/location.service';
+import { UserDto } from '@/user/dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -55,10 +56,11 @@ export class UserService {
     return newUser;
   }
 
-  findAll(relations?: FindOptionsRelations<User>) {
-    return this.userRepository.find({
+  async findAll(relations?: FindOptionsRelations<User>): Promise<UserDto[]> {
+    const users = await this.userRepository.find({
       relations,
     });
+    return users.map(UserDto.fromEntity);
   }
 
   async getByUsername(username: string): Promise<User> {
@@ -70,7 +72,10 @@ export class UserService {
     return user;
   }
 
-  async findOne(id: number, relations?: FindOptionsRelations<User>) {
+  async findOne(
+    id: number,
+    relations?: FindOptionsRelations<User>,
+  ): Promise<UserDto> {
     const user = await this.userRepository.findOne({
       where: { id },
       relations,
@@ -78,10 +83,10 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User ${id} not found`);
     }
-    return user;
+    return UserDto.fromEntity(user);
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<UserDto> {
     const location =
       updateUserDto.locationId &&
       (await this.locationService.findOne(updateUserDto.locationId));
@@ -102,11 +107,13 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User ${id} not found`);
     }
-    return this.userRepository.save(user);
+    const newUser = await this.userRepository.save(user);
+    return UserDto.fromEntity(newUser);
   }
 
-  async remove(id: number) {
-    const user = await this.findOne(id);
-    return this.userRepository.remove(user);
+  async remove(id: number): Promise<UserDto> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    const deletedUser = await this.userRepository.remove(user);
+    return UserDto.fromEntity(deletedUser);
   }
 }
