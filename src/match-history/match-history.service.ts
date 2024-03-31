@@ -134,16 +134,16 @@ export class MatchHistoryService {
       .createQueryBuilder('history')
       .select([
         'history.userId',
-        'COUNT(CASE WHEN history.win = true THEN 1 END) AS wins',
-        'COUNT(history.userId) AS played',
+        'COUNT(CASE WHEN history.win THEN 1 END) AS wins',
+        'COUNT(CASE WHEN NOT history.win THEN 1 END) AS loses',
       ])
       .where('history.userId = :userId', { userId })
       .groupBy('history.userId')
       .getRawOne();
 
     return {
-      wins: result ? Number(result.wins) : 0,
-      played: result ? Number(result.played) : 0,
+      wins: Number(result.wins),
+      loses: Number(result.loses),
     };
   }
 }

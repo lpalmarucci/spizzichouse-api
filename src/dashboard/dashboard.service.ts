@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MatchHistoryService } from '@/match-history/match-history.service';
+import { DashboardSummaryHistory } from '@/dashboard/dto/Dashboard.types';
 
 @Injectable()
 export class DashboardService {
@@ -18,12 +19,18 @@ export class DashboardService {
       .getRawMany();
   }
 
-  async getSummary(userId: number, limit: number = 5) {
+  async getSummary(userId: number) {
+    return this._matchHistoryService.getSummary(userId);
+  }
+
+  async getSummaryHistoryMatches(
+    userId: number,
+    limit: number = 5,
+  ): Promise<DashboardSummaryHistory[]> {
     return this._matchHistoryService
       .getRepository()
       .createQueryBuilder('mh')
       .select([
-        'mh.win as win',
         'mh.matchId as match_id',
         'mh.totalScore as score',
         'match.totalPoints as total_points',

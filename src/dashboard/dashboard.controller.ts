@@ -8,12 +8,17 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Get('summary')
-  public getSummaryData(
+  public getSummaryData(@User() user: JwtPayload) {
+    return this.dashboardService.getSummary(user.sub);
+  }
+
+  @Get('summary/history')
+  public getSummaryHistoryMatches(
     @User() user: JwtPayload,
-    @Query('limit') limit: number,
+    @Query() limit: number,
   ) {
-    const take = isNaN(limit) ? 5 : limit;
-    return this.dashboardService.getSummary(user.sub, take);
+    const newLimit = isNaN(limit) ? 5 : 5;
+    return this.dashboardService.getSummaryHistoryMatches(user.sub, newLimit);
   }
 
   @Get('ranking')
