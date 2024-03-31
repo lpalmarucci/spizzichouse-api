@@ -79,7 +79,7 @@ export class UserService {
   async findOne(
     id: number,
     relations?: FindOptionsRelations<User>,
-  ): Promise<UserDto> {
+  ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id },
       relations,
@@ -87,7 +87,7 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User ${id} not found`);
     }
-    return UserDto.fromEntity(user);
+    return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<UserDto> {

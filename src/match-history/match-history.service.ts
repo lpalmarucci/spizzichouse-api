@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { FindManyOptions, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MatchHistory } from '@/match-history/entities/match.history.entity';
+import { MatchHistory } from '@/match-history/entities/MatchHistory.entity';
 import { CreateMatchHistoryDto } from '@/match-history/dto/create-match-history.dto';
 import { UserService } from '@/user/user.service';
 import { MatchService } from '@/match/match.service';
@@ -17,6 +17,10 @@ export class MatchHistoryService {
     @Inject(forwardRef(() => MatchService))
     private readonly _matchService: MatchService,
   ) {}
+
+  getRepository(): Repository<MatchHistory> {
+    return this._matchHistoryRepository;
+  }
 
   /**
    * Create a new historic match data

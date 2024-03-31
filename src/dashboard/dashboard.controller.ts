@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { User } from '@/user/user.decorator';
 import { JwtPayload } from '@/auth/auth.types';
@@ -8,9 +8,12 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Get('summary')
-  public getSummaryData(@User() user: JwtPayload) {
-    console.log({ user });
-    return this.dashboardService.getSummary(user.sub);
+  public getSummaryData(
+    @User() user: JwtPayload,
+    @Query('limit') limit: number,
+  ) {
+    const take = isNaN(limit) ? 5 : limit;
+    return this.dashboardService.getSummary(user.sub, take);
   }
 
   @Get('ranking')

@@ -11,7 +11,7 @@ import {
 import { Location } from '@/location/entities/location.entity';
 import { Round } from '@/round/entities/round.entity';
 import { Match } from '@/match/entities/match.entity';
-import { MatchHistory } from '@/match-history/entities/match.history.entity';
+import { MatchHistory } from '@/match-history/entities/MatchHistory.entity';
 
 @Entity()
 export class User {
