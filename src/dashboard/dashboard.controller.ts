@@ -15,9 +15,9 @@ export class DashboardController {
   @Get('summary/history')
   public getSummaryHistoryMatches(
     @User() user: JwtPayload,
-    @Query() limit: number,
+    @Query('limit') limit: number,
   ) {
-    const newLimit = isNaN(limit) ? 5 : 5;
+    const newLimit = isNaN(limit) ? 5 : limit;
     return this.dashboardService.getSummaryHistoryMatches(user.sub, newLimit);
   }
 
