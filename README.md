@@ -7,10 +7,10 @@ Benvenuto nel backend di "Spizzichouse" - un'applicazione per gestire le partite
 Questo backend fornisce l'infrastruttura necessaria per gestire le operazioni legate alle partite di Spizzico. Utilizza NestJS come framework per la creazione di API, TypeORM come ORM per interagire con il database PostgreSQL.
 
 ## Caratteristiche Principali
-
-- Gestione delle partite di Spizzico
-- Persistenza dati con TypeORM e PostgreSQL
-- API RESTful per interagire con l'applicazione frontend
+- Gestione utenti disponibili nelle partite
+- Gestione Locations dove vengono giocate le partite
+- Gestione delle partite e singoli round giocati
+- Dashboard riassuntiva che mostra i dati delle ultime partite e un ranking globale tra tutti gli utenti
 
 ## Prerequisiti
 
@@ -22,8 +22,8 @@ Questo backend fornisce l'infrastruttura necessaria per gestire le operazioni le
 
 1. Clona il repository:
    ```bash
-   git clone https://github.com/tuonome/spizzichouse-backend.git
-   cd spizzichouse-backend
+   git clone https://github.com/tuonome/spizzichouse-api.git
+   cd spizzichouse-api
    ```
 
 2. Installa le dipendenze
