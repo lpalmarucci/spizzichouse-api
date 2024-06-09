@@ -2,7 +2,6 @@ import { BadRequestException, Controller, Get, Param } from '@nestjs/common';
 import { MatchHistoryService } from '@/match-history/match-history.service';
 import { User } from '@/user/user.decorator';
 import { JwtPayload } from '@/auth/auth.types';
-import { HistorySummaryDto } from '@/match-history/dto/history-summary.dto';
 
 @Controller('history')
 export class MatchHistoryController {
@@ -35,14 +34,5 @@ export class MatchHistoryController {
       },
       take: numMatch,
     });
-  }
-
-  /**
-   * Get summary of the current user
-   * @param user User logged in
-   */
-  @Get('summary')
-  getSummary(@User() user: JwtPayload): Promise<HistorySummaryDto> {
-    return this._matchHistoryService.getSummary(user.sub);
   }
 }

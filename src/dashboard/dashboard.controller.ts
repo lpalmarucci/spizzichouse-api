@@ -22,8 +22,7 @@ export class DashboardController {
   }
 
   @Get('ranking')
-  ranking(@User() user: JwtPayload) {
-    console.log({ user });
+  ranking() {
     return this.dashboardService.getRanking();
   }
 }

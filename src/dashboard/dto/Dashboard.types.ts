@@ -7,4 +7,5 @@ export type DashboardSummaryHistory = {
 export type DashboardRanking = {
   total_wins: number;
   username: string;
+  user_id: number;
 };

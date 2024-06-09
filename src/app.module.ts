@@ -23,6 +23,7 @@ import config from '@/config';
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
         schema: process.env.DATABASE_SCHEMA,
+        logging: process.env.NODE_ENV === 'development',
         autoLoadEntities: true,
         entities: ['src/**/*{.entity.ts}'],
         synchronize: process.env.NODE_ENV === 'development',

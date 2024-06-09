@@ -1,16 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { MatchHistoryService } from '@/match-history/match-history.service';
-import { DashboardSummaryHistory } from '@/dashboard/dto/Dashboard.types';
+import {
+  DashboardRanking,
+  DashboardSummaryHistory,
+} from '@/dashboard/dto/Dashboard.types';
 
 @Injectable()
 export class DashboardService {
   constructor(private readonly _matchHistoryService: MatchHistoryService) {}
 
-  async getRanking() {
+  async getRanking(): Promise<DashboardRanking[]> {
     return this._matchHistoryService
       .getRepository()
       .createQueryBuilder('mh')
-      .select(['COUNT(mh.win) as total_wins', 'user.username as username'])
+      .select([
+        'COUNT(mh.win) as total_wins',
+        'user.username as username',
+        'mh.userId as user_id',
+      ])
       .innerJoin('mh.user', 'user')
       .where('mh.win = true')
       .groupBy('mh.userId, user.username')
@@ -20,14 +27,36 @@ export class DashboardService {
   }
 
   async getSummary(userId: number) {
-    return this._matchHistoryService.getSummary(userId);
+    const result = await this._matchHistoryService
+      .getRepository()
+      .createQueryBuilder('history')
+      .select([
+        'history.userId',
+        'COUNT(CASE WHEN history.win THEN 1 END) AS wins',
+        'COUNT(CASE WHEN NOT history.win THEN 1 END) AS loses',
+      ])
+      .where('history.userId = :userId', { userId })
+      .groupBy('history.userId')
+      .getRawOne();
+
+    if (!result) {
+      return {
+        wins: 0,
+        loses: 0,
+      };
+    }
+
+    return {
+      wins: Number(result.wins),
+      loses: Number(result.loses),
+    };
   }
 
   async getSummaryHistoryMatches(
     userId: number,
     limit: number = 5,
   ): Promise<DashboardSummaryHistory[]> {
-    return this._matchHistoryService
+    return await this._matchHistoryService
       .getRepository()
       .createQueryBuilder('mh')
       .select([
