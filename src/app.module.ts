@@ -8,6 +8,7 @@ import { LocationModule } from './location/location.module';
 import { MatchModule } from './match/match.module';
 import { RoundModule } from './round/round.module';
 import { AuthModule } from './auth/auth.module';
+import { MatchHistoryModule } from './match-history/match-history.module';
 import config from '@/config';
 
 @Module({
@@ -21,6 +22,7 @@ import config from '@/config';
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
         schema: process.env.DATABASE_SCHEMA,
+        logging: process.env.NODE_ENV === 'development',
         autoLoadEntities: true,
         entities: ['src/**/*{.entity.ts}'],
         synchronize: process.env.NODE_ENV === 'development',
@@ -36,6 +38,7 @@ import config from '@/config';
     MatchModule,
     RoundModule,
     AuthModule,
+    MatchHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

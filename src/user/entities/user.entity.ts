@@ -11,6 +11,7 @@ import {
 import { Location } from '@/location/entities/location.entity';
 import { Round } from '@/round/entities/round.entity';
 import { Match } from '@/match/entities/match.entity';
+import { MatchHistory } from '@/match-history/entities/MatchHistory.entity';
 
 @Entity()
 export class User {
@@ -26,7 +27,7 @@ export class User {
   @Column()
   username: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @ManyToOne(() => Location, (location) => location.users, {
@@ -39,6 +40,12 @@ export class User {
 
   @OneToMany(() => Round, (round) => round.user)
   round: Round[];
+
+  @OneToMany(() => MatchHistory, (mh) => mh.user, {
+    eager: false,
+    lazy: true,
+  })
+  matchHistory: MatchHistory;
 
   @CreateDateColumn()
   createdAt: Date;
