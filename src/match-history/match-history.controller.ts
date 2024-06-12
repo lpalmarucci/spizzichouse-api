@@ -1,38 +1,28 @@
-import { BadRequestException, Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { MatchHistoryService } from '@/match-history/match-history.service';
 import { User } from '@/user/user.decorator';
 import { JwtPayload } from '@/auth/auth.types';
 
-@Controller('history')
+@Controller()
 export class MatchHistoryController {
   constructor(private readonly _matchHistoryService: MatchHistoryService) {}
 
-  /**
-   * Get the last N matches
-   * @param user User logged in
-   * @param numMatch Number of matches
-   */
-  @Get('getMatches/:numMatch')
-  getLastMatches(
+  @Get('history/summary')
+  public getSummaryData(@User() user: JwtPayload) {
+    return this._matchHistoryService.getSummary(user.sub);
+  }
+
+  @Get('history/matches')
+  public getDetailedSummary(
     @User() user: JwtPayload,
-    @Param('numMatch') numMatch?: number,
+    @Query('limit') limit: number,
   ) {
-    if (!numMatch || isNaN(numMatch))
-      throw new BadRequestException('Set the number of match to retrieve');
-    return this._matchHistoryService.getByUser(user.sub, {
-      select: {
-        userId: true,
-        matchId: true,
-        totalScore: true,
-        win: true,
-        match: {
-          totalPoints: true,
-        },
-      },
-      relations: {
-        match: true,
-      },
-      take: numMatch,
-    });
+    const newLimit = isNaN(limit) ? 5 : limit;
+    return this._matchHistoryService.getDetailedSummary(user.sub, newLimit);
+  }
+
+  @Get('ranking')
+  ranking() {
+    return this._matchHistoryService.getRanking();
   }
 }

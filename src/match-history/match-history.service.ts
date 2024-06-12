@@ -6,7 +6,11 @@ import { CreateMatchHistoryDto } from '@/match-history/dto/create-match-history.
 import { UserService } from '@/user/user.service';
 import { MatchService } from '@/match/match.service';
 import { UpdateMatchHistoryDto } from '@/match-history/dto/update-match-history.dto';
-import { HistorySummaryDto } from '@/match-history/dto/history-summary.dto';
+import {
+  DashboardRanking,
+  MatchHistorySummary,
+  SummaryHistoryDetail,
+} from '@/match-history/dto/history-summary.dto';
 
 @Injectable()
 export class MatchHistoryService {
@@ -96,40 +100,59 @@ export class MatchHistoryService {
   ) {
     const matchHistory = await this.findOne(userId, matchId);
 
-    const data = matchHistory;
-
     if (matchHistoryDto.userId) {
-      data['user'] = await this._userService.findOne(matchHistoryDto.userId);
+      matchHistory['user'] = await this._userService.findOne(
+        matchHistoryDto.userId,
+      );
     }
 
     if (matchHistoryDto.matchId) {
-      data['match'] = await this._matchService.findOne(matchHistoryDto.matchId);
+      matchHistory['match'] = await this._matchService.findOne(
+        matchHistoryDto.matchId,
+      );
     }
 
     const newMatchHistory = await this._matchHistoryRepository.preload({
-      ...data,
+      ...matchHistory,
       ...matchHistoryDto,
     });
 
     return this._matchHistoryRepository.save(newMatchHistory);
   }
 
+  /**
+   * Delete past matches by user id
+   * @param userId
+   */
   async deleteByUser(userId: number) {
     const entitiesToDelete = await this.getByUser(userId);
     return this._matchHistoryRepository.remove(entitiesToDelete);
   }
 
+  /**
+   * Delete past matches by match id
+   * @param matchId
+   */
   async deleteByMatch(matchId: number) {
     const entitiesToDelete = await this.getByMatch(matchId);
     return this._matchHistoryRepository.remove(entitiesToDelete);
   }
 
+  /**
+   * Delete specific record of the match history table
+   * @param userId
+   * @param matchId
+   */
   async delete(userId: number, matchId: number) {
     const entitiesToDelete = await this.findOne(userId, matchId);
     return this._matchHistoryRepository.remove(entitiesToDelete);
   }
 
-  async getSummary(userId: number): Promise<HistorySummaryDto> {
+  /**
+   * Get the number of wins and loses for a specific user
+   * @param userId
+   */
+  async getSummary(userId: number): Promise<MatchHistorySummary> {
     const result = await this._matchHistoryRepository
       .createQueryBuilder('history')
       .select([
@@ -141,9 +164,57 @@ export class MatchHistoryService {
       .groupBy('history.userId')
       .getRawOne();
 
+    if (!result) {
+      return {
+        wins: 0,
+        loses: 0,
+      };
+    }
+
     return {
       wins: Number(result.wins),
       loses: Number(result.loses),
     };
+  }
+
+  /**
+   * Get the last stats for N matches for a specific user
+   * @param userId Current user id
+   * @param limit Number of matches to retrieve (starting from the latest)
+   */
+  async getDetailedSummary(
+    userId: number,
+    limit: number = 5,
+  ): Promise<SummaryHistoryDetail[]> {
+    return await this._matchHistoryRepository
+      .createQueryBuilder('mh')
+      .select([
+        'mh.matchId as match_id',
+        'mh.totalScore as score',
+        'match.totalPoints as total_points',
+      ])
+      .innerJoin('mh.match', 'match')
+      .where('mh.userId = :userId', { userId })
+      .limit(limit)
+      .getRawMany();
+  }
+
+  /**
+   * Get top 3 player with the highest number of wins
+   */
+  async getRanking(): Promise<DashboardRanking[]> {
+    return this._matchHistoryRepository
+      .createQueryBuilder('mh')
+      .select([
+        'COUNT(mh.win) as total_wins',
+        'user.username as username',
+        'mh.userId as user_id',
+      ])
+      .innerJoin('mh.user', 'user')
+      .where('mh.win = true')
+      .groupBy('mh.userId, user.username')
+      .orderBy('total_wins', 'DESC')
+      .limit(3)
+      .getRawMany();
   }
 }
