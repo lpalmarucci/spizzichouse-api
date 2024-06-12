@@ -22,10 +22,6 @@ export class MatchHistoryService {
     private readonly _matchService: MatchService,
   ) {}
 
-  getRepository(): Repository<MatchHistory> {
-    return this._matchHistoryRepository;
-  }
-
   /**
    * Create a new historic match data
    * @param matchHistoryDto New match history
