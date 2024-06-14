@@ -182,7 +182,7 @@ export class MatchHistoryService {
     userId: number,
     limit: number = 5,
   ): Promise<SummaryHistoryDetail[]> {
-    return await this._matchHistoryRepository
+    const history = await this._matchHistoryRepository
       .createQueryBuilder('mh')
       .select([
         'mh.matchId as match_id',
@@ -191,8 +191,10 @@ export class MatchHistoryService {
       ])
       .innerJoin('mh.match', 'match')
       .where('mh.userId = :userId', { userId })
+      .orderBy('match_id', 'DESC')
       .limit(limit)
       .getRawMany();
+    return history.reverse();
   }
 
   /**
