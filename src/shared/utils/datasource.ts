@@ -15,6 +15,7 @@ const datasource = new DataSource({
   logging: process.env.NODE_ENV === 'development',
   entities: [path.join(process.cwd(), '**/*.entity{.ts,.js}')],
   migrations: [path.join(process.cwd(), 'migrations/**/*{.ts,.js}')],
-  synchronize: false,
+  synchronize: process.env.NODE_ENV === 'development',
+  migrationsRun: process.env.NODE_ENV !== 'development',
 });
 export default datasource;
