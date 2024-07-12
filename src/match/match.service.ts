@@ -52,7 +52,11 @@ export class MatchService {
    * Get the list of all matches
    * @param opt
    */
-  async find(opt?: { userId?: number; locationId?: number }) {
+  async find(opt?: {
+    userId?: number;
+    locationId?: number;
+    inProgress?: boolean;
+  }) {
     const query = this.matchRepository
       .createQueryBuilder('m')
       .innerJoinAndSelect('m.users', 'u')
@@ -73,6 +77,10 @@ export class MatchService {
       query.andWhere('m.locationId = :locationId', {
         locationId: opt.locationId,
       });
+    }
+
+    if (opt.inProgress) {
+      query.andWhere('m.inProgress = :status', { status: opt.inProgress });
     }
 
     return query.getMany();

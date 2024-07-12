@@ -33,8 +33,10 @@ export class MatchController {
     userId?: number,
     @Query('location')
     locationId?: number,
+    @Query('inProgress')
+    inProgress?: boolean,
   ) {
-    return this.matchService.find({ userId, locationId });
+    return this.matchService.find({ userId, locationId, inProgress });
   }
 
   @Get(':id')
