@@ -28,8 +28,13 @@ export class MatchController {
   }
 
   @Get()
-  findAll() {
-    return this.matchService.findAll({ location: true, users: true });
+  findAll(
+    @Query('user')
+    userId?: number,
+    @Query('location')
+    locationId?: number,
+  ) {
+    return this.matchService.find({ userId, locationId });
   }
 
   @Get(':id')

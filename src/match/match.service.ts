@@ -50,10 +50,32 @@ export class MatchService {
 
   /**
    * Get the list of all matches
-   * @param relations
+   * @param opt
    */
-  findAll(relations?: FindOptionsRelations<Match>) {
-    return this.matchRepository.find({ relations });
+  async find(opt?: { userId?: number; locationId?: number }) {
+    const query = this.matchRepository
+      .createQueryBuilder('m')
+      .innerJoinAndSelect('m.users', 'u')
+      .leftJoinAndSelect('m.location', 'l', 'l.id = m.locationId');
+
+    if (opt.userId) {
+      const matchQuery = this.matchRepository
+        .createQueryBuilder('match')
+        .select('match.id')
+        .innerJoin('match.users', 'mu')
+        .where('match_mu.userId = :userId', { userId: opt.userId });
+
+      query
+        .where('m.id IN (' + matchQuery.getQuery() + ')')
+        .setParameters(matchQuery.getParameters());
+    }
+    if (opt.locationId) {
+      query.andWhere('m.locationId = :locationId', {
+        locationId: opt.locationId,
+      });
+    }
+
+    return query.getMany();
   }
 
   /**
