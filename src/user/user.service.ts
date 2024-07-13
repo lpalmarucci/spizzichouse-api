@@ -29,6 +29,10 @@ export class UserService {
     );
   }
 
+  get repository() {
+    return this.userRepository;
+  }
+
   async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
     const username = createUserDto.username;
     const usernameAlreadyExists = await this.userRepository.findOne({
